@@ -1,6 +1,10 @@
 const { Op } = require("sequelize");
 const db = require("../models/index.js");
 const UserRepo = require("../repos/user.repo.js");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
 const {
   validateCreateUser,
   validateUpdateUser,
@@ -76,12 +80,28 @@ class UserController extends BaseController {
     }
 
     try {
-      const user = await UserRepo.createUser(req.body);
-      return this.successResponse(res, user, "User created successfully");
+      const { name, email, role, password } = req.body;
+      const hashPassword = bcrypt.hash(password, 10);
+      const userObj = { name, email, role, hashPassword };
+      const user = await UserRepo.createUser(userObj);
+      const token = jwt.sign(userObj, process.env.SECRET_KEY);
+      req.user = {"token": token};
+      console.log(req.user);
+
+      return this.successResponse(
+        res,
+        token,
+        "Signup success, User created successfully"
+      );
     } catch (e) {
       // console.log(e)
       // throw new Error("Error creating user");
-      return this.errorResponse(res, "Error creating user", 400, e);
+      return this.errorResponse(
+        res,
+        "Signup failed, Error creating user",
+        400,
+        e
+      );
     }
   };
 
