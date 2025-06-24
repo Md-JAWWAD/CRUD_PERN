@@ -17,7 +17,7 @@ const Signup = () => {
         console.log("Kindly fill all required fields");
       }
       let signupObj = { name, email, role, password };
-      const res = await axios.post("http://localhost:2025/signup", signupObj, {
+      const res = await axios.post("http://localhost:2025/signup/create-user", signupObj, {
         headers: { "Content-Type": "application/json" },
       });
       try {
