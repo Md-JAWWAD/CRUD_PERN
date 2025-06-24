@@ -14,7 +14,7 @@ const Login = () => {
     try {
       e.preventDefault();
       let loginObj = { email, password };
-      let res = await axios.post("http://localhost:2025/login", loginObj);
+      let res = await axios.post("http://localhost:2025/login/user-login", loginObj);
       try {
         console.log(res)
         localStorage.setItem('token', res.data.data);
